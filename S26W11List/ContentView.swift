@@ -28,16 +28,46 @@ struct SongItem: View {
     let song: Song
     
     var body: some View {
-        VStack(
-            alignment: .leading,
-            spacing: 16,
-        ) {
-            Text(song.title)
-                .font(.headline)
-                .foregroundColor(.blue)
-            Text(song.artist)
-                .font(.caption)
-                .foregroundColor(.gray)
+        HStack(spacing: 16) {
+            ImageAlbum(albumUrl: makeAlbumUrl(song.id))
+            
+            VStack(
+                alignment: .leading,
+                spacing: 16,
+            ) {
+                Text(song.title)
+                    .font(.headline)
+                    .foregroundColor(.blue)
+                Text(song.artist)
+                    .font(.caption)
+                    .foregroundColor(.gray)
+            }
+        }
+    }
+}
+
+//func makeAlbumUrl(_ id: UUID) -> URL {
+//    URL(string: "https://picsum.photos/80/80?random=\(id)")!
+//}
+let makeAlbumUrl: (UUID) -> URL = {
+    URL(string: "https://picsum.photos/80/80?random=\($0)")!
+}
+
+struct ImageAlbum: View {
+    let albumUrl: URL
+    
+    var body: some View {
+        AsyncImage(url: albumUrl) { phase in
+            if let image = phase.image {
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
+                    .frame(width: 80, height: 80)
+                    .clipShape(RoundedRectangle(cornerRadius: 10))
+            } else {
+                ProgressView()
+                    .frame(width: 80, height: 80)
+            }
         }
     }
 }
